@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Line } from "react-chartjs-2";
+import { useState } from 'react'
+import { Line } from 'react-chartjs-2'
 import {
   Chart as ChartJS,
   LineElement,
@@ -8,8 +8,8 @@ import {
   PointElement,
   Filler,
   Tooltip,
-} from "chart.js";
-import { Select } from "antd";
+} from 'chart.js'
+import { Select } from 'antd'
 
 ChartJS.register(
   LineElement,
@@ -18,11 +18,11 @@ ChartJS.register(
   PointElement,
   Filler,
   Tooltip
-);
+)
 
 const SalesOverview = () => {
   // States
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState(new Date().getFullYear())
   const {
     January,
     February,
@@ -36,27 +36,27 @@ const SalesOverview = () => {
     October,
     November,
     December,
-  } = {};
+  } = {}
 
   // Chart data
   const data = {
     labels: [
-      "Jan",
-      "Feb",
-      "Mar",
-      "Apr",
-      "May",
-      "Jun",
-      "Jul",
-      "Aug",
-      "Sep",
-      "Oct",
-      "Nov",
-      "Dec",
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
     ],
     datasets: [
       {
-        label: "Total Sales",
+        label: 'Total Sales',
         data: [
           January || 25000,
           February || 30000,
@@ -71,15 +71,15 @@ const SalesOverview = () => {
           November || 10000,
           December || 5000,
         ],
-        borderColor: "#007bff",
+        borderColor: '#007bff',
         borderWidth: 2,
         fill: true,
         backgroundColor: (context) => {
-          const chart = context.chart;
-          const { ctx, chartArea } = chart;
+          const chart = context.chart
+          const { ctx, chartArea } = chart
 
           if (!chartArea) {
-            return null;
+            return null
           }
 
           const gradient = ctx.createLinearGradient(
@@ -87,20 +87,20 @@ const SalesOverview = () => {
             chartArea.top,
             0,
             chartArea.bottom
-          );
-          gradient.addColorStop(0, "rgba(0, 123, 255, 0.5)");
-          gradient.addColorStop(1, "rgba(255, 255, 255, 0)");
+          )
+          gradient.addColorStop(0, 'rgba(0, 123, 255, 0.5)')
+          gradient.addColorStop(1, 'rgba(255, 255, 255, 0)')
 
-          return gradient;
+          return gradient
         },
         tension: 0.4,
-        pointBackgroundColor: "#007bff",
+        pointBackgroundColor: '#007bff',
         pointHoverRadius: 6,
         pointRadius: 3,
         pointHoverBorderWidth: 2,
       },
     ],
-  };
+  }
 
   const options = {
     scales: {
@@ -109,13 +109,13 @@ const SalesOverview = () => {
         ticks: {
           stepSize: 25000,
           callback: (value) => `€${(value / 1000).toFixed(0)}k`,
-          color: "#B0B0B0",
+          color: '#B0B0B0',
           font: {
             size: 12,
           },
         },
         grid: {
-          color: "#EDEDED",
+          color: '#EDEDED',
           drawBorder: false,
         },
       },
@@ -123,9 +123,9 @@ const SalesOverview = () => {
         ticks: {
           font: {
             size: 12,
-            weight: "bold",
+            weight: 'bold',
           },
-          color: "#B0B0B0",
+          color: '#B0B0B0',
         },
         grid: {
           display: false,
@@ -136,22 +136,22 @@ const SalesOverview = () => {
       tooltip: {
         callbacks: {
           label: function (context) {
-            const sales = context.raw;
-            const profit = sales * 0.28; // Assuming profit is 28% of sales
+            const sales = context.raw
+            const profit = sales * 0.28 // Assuming profit is 28% of sales
             return [
               `Total Sales: €${sales.toLocaleString()}`,
               `Profit on Sales: €${profit.toLocaleString()}`,
-            ];
+            ]
           },
         },
         displayColors: false,
-        backgroundColor: "#ffffff",
-        borderColor: "#EDEDED",
+        backgroundColor: '#ffffff',
+        borderColor: '#EDEDED',
         borderWidth: 1,
-        titleColor: "#333",
-        bodyColor: "#333",
+        titleColor: '#333',
+        bodyColor: '#333',
         titleFont: {
-          weight: "bold",
+          weight: 'bold',
           size: 14,
         },
         bodyFont: {
@@ -170,7 +170,7 @@ const SalesOverview = () => {
     },
     responsive: true,
     maintainAspectRatio: false,
-  };
+  }
 
   return (
     <div className="w-full h-full bg-white rounded-md p-6 shadow-md">
@@ -196,7 +196,7 @@ const SalesOverview = () => {
         <Line data={data} options={options} />
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default SalesOverview;
+export default SalesOverview

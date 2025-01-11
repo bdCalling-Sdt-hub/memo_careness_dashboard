@@ -7,16 +7,14 @@ import ContextProvider from './Provider/ContextProvider.jsx'
 import { store } from './Redux/store.js'
 import { Provider } from 'react-redux'
 import { Toaster } from 'react-hot-toast'
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
       <ContextProvider>
         <RouterProvider router={router} />
       </ContextProvider>
-      <Toaster
-        position="top-center"
-        reverseOrder={false}
-      />
+      <Toaster position="top-center" reverseOrder={false} />
     </Provider>
-  </StrictMode>,
+  </StrictMode>
 )

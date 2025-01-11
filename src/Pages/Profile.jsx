@@ -1,20 +1,29 @@
-import React, { useState } from "react";
-import { Tabs } from "antd";
-import { FaArrowLeft } from "react-icons/fa";
-import PersonalDetails from "../components/Profile/PersonalDetails";
-import AccountDetails from "../components/Profile/AccountDetails";
-import ManageAccounts from "../components/Profile/ManageAccounts.JSX";
+import { useEffect, useState } from 'react'
+import { Tabs } from 'antd'
+import { FaArrowLeft } from 'react-icons/fa'
+import PersonalDetails from '../components/Profile/PersonalDetails'
+import AccountDetails from '../components/Profile/AccountDetails'
+import ManageAccounts from '../components/Profile/ManageAccounts.JSX'
 
 const Profile = () => {
-  const [activeTab, setActiveTab] = useState("1");
+  const [activeTab, setActiveTab] = useState('1')
+
+  useEffect(() => {
+    const storedTab = localStorage.getItem('activeTab')
+    if (storedTab) {
+      setActiveTab(storedTab)
+      localStorage.removeItem('activeTab')
+    }
+  }, [])
 
   const items = [
     {
-      key: "1",
+      key: '1',
       label: (
         <span
-          className={`${activeTab === "1" ? "text-teal-600 font-medium" : "text-gray-600"
-            }`}
+          className={`${
+            activeTab === '1' ? 'text-teal-600 font-medium' : 'text-gray-600'
+          }`}
         >
           Personal details
         </span>
@@ -22,11 +31,12 @@ const Profile = () => {
       children: <PersonalDetails />,
     },
     {
-      key: "2",
+      key: '2',
       label: (
         <span
-          className={`${activeTab === "2" ? "text-teal-600 font-medium" : "text-gray-600"
-            }`}
+          className={`${
+            activeTab === '2' ? 'text-teal-600 font-medium' : 'text-gray-600'
+          }`}
         >
           Account details
         </span>
@@ -34,18 +44,19 @@ const Profile = () => {
       children: <AccountDetails />,
     },
     {
-      key: "3",
+      key: '3',
       label: (
         <span
-          className={`${activeTab === "3" ? "text-teal-600 font-medium" : "text-gray-600"
-            }`}
+          className={`${
+            activeTab === '3' ? 'text-teal-600 font-medium' : 'text-gray-600'
+          }`}
         >
           Manage accounts
         </span>
       ),
-      children: <ManageAccounts />,
+      children: <ManageAccounts onAdminAdded={() => setActiveTab('3')} />,
     },
-  ];
+  ]
 
   return (
     <div className="w-full px-6 py-8 bg-white rounded-lg shadow-md">
@@ -63,12 +74,12 @@ const Profile = () => {
         onChange={(key) => setActiveTab(key)}
         items={items}
         tabBarStyle={{
-          borderBottom: "1px solid #e0e0e0",
+          borderBottom: '1px solid #e0e0e0',
         }}
         className="custom-tabs"
       />
     </div>
-  );
-};
+  )
+}
 
-export default Profile;
+export default Profile

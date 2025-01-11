@@ -1,4 +1,4 @@
-import { baseApis } from "./baseApis";
+import { baseApis } from './baseApis'
 
 const clientApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
@@ -82,7 +82,7 @@ const clientApis = baseApis.injectEndpoints({
       }),
     }),
   }),
-});
+})
 
 export const {
   useUpdateClientMutation,
@@ -97,6 +97,6 @@ export const {
   usePayAdminFeeMutation,
   useNotifyAllShopsMutation,
   useNotifySingleShopMutation,
-} = clientApis;
+} = clientApis
 
-export default clientApis;
+export default clientApis

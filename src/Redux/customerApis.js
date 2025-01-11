@@ -1,4 +1,4 @@
-import { baseApis } from "./baseApis";
+import { baseApis } from './baseApis'
 
 const customerApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
@@ -30,12 +30,11 @@ const customerApis = baseApis.injectEndpoints({
       }),
     }),
   }),
-});
+})
 
 export const {
   useUpdateCustomerMutation,
   useBlockUnblockUserMutation,
   useGetAllCustomersQuery,
   useCompleteCustomerProfileMutation,
-} = customerApis;
-
+} = customerApis

@@ -1,4 +1,4 @@
-import { baseApis } from "./baseApis";
+import { baseApis } from './baseApis'
 
 const metaApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
@@ -15,10 +15,6 @@ const metaApis = baseApis.injectEndpoints({
       }),
     }),
   }),
-});
+})
 
-export const {
-  useGetMetaDataQuery,
-  useGetSalesProfitChartDataQuery,
-} = metaApis;
-
+export const { useGetMetaDataQuery, useGetSalesProfitChartDataQuery } = metaApis

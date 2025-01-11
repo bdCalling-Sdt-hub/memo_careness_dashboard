@@ -1,4 +1,4 @@
-import { baseApis } from "./baseApis";
+import { baseApis } from './baseApis'
 
 const categoryApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
@@ -29,12 +29,11 @@ const categoryApis = baseApis.injectEndpoints({
       }),
     }),
   }),
-});
+})
 
 export const {
   useCreateCategoryMutation,
   useUpdateCategoryMutation,
   useGetMyCategoriesQuery,
   useDeleteCategoryMutation,
-} = categoryApis;
-
+} = categoryApis
