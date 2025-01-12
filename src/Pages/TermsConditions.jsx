@@ -1,10 +1,21 @@
 import { useState } from 'react'
 import JoditEditor from 'jodit-react'
 import { useNavigate } from 'react-router-dom'
+import {
+  useCreateAdminMutation,
+  useGetAllAdminInformationQuery,
+} from '../Redux/manageAccountsApis'
 
 const TermsConditions = () => {
   const navigate = useNavigate()
   const [content, setContent] = useState('')
+
+  const {
+    data: termsData,
+    isLoading,
+    isError,
+  } = useGetAllAdminInformationQuery()
+  const [createTasks] = useCreateAdminMutation()
 
   // Handle Clear action
   const handleClear = () => {
@@ -35,7 +46,7 @@ const TermsConditions = () => {
         <JoditEditor
           id="editor"
           value={content}
-          onChange={(newContent) => setContent(newContent)}
+          onBlur={(newContent) => setContent(newContent)}
           config={{
             buttons:
               'bold,italic,underline,|,ul,ol,|,h1,h2,paragraph,|,align,|,image,link,|,source',
