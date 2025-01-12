@@ -7,9 +7,10 @@ import { useGetProfileInformationQuery } from '../../Redux/profileApis'
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false)
-  const { data, isLoading, isError } = useGetProfileInformationQuery()
+  const { data } = useGetProfileInformationQuery()
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
+
   const notifications = [
     {
       id: 1,
@@ -110,8 +111,8 @@ const Navbar = () => {
             alt=""
           />
           <Link to={`/profile`} className="text-left">
-            <p className="text-sm font-semibold">Shaharul Siyam</p>
-            <p className="text-xs text-gray-500">shaharulsiyam0273@gmail.com</p>
+            <p className="text-sm font-semibold">{data?.data?.name}</p>
+            <p className="text-xs text-gray-500">{data?.data?.email}</p>
           </Link>
         </button>
       </div>

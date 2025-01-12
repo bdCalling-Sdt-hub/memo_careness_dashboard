@@ -2,39 +2,26 @@ import { baseApis } from './baseApis'
 
 const customerApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
-    updateCustomer: builder.mutation({
-      query: (data) => ({
-        url: '/api/customer/update',
-        method: 'PATCH',
-        body: data,
-      }),
-    }),
-    blockUnblockUser: builder.mutation({
-      query: ({ id, data }) => ({
-        url: `/api/user/block-unblock/${id}`,
-        method: 'PATCH',
-        body: data,
-      }),
-    }),
     getAllCustomers: builder.query({
       query: () => ({
         url: '/customer/get-all',
         method: 'GET',
       }),
+      providesTags: ['customers'],
     }),
-    completeCustomerProfile: builder.mutation({
-      query: (data) => ({
-        url: '/customer/complete-profile',
-        method: 'POST',
-        body: data,
-      }),
+
+    blockUnblockCustomer: builder.mutation({
+      query: ({ id, status }) => {
+        return {
+          url: `/user/block-unblock/${id}`,
+          method: 'PATCH',
+          body: { status },
+        }
+      },
+      invalidatesTags: ['customers'],
     }),
   }),
 })
 
-export const {
-  useUpdateCustomerMutation,
-  useBlockUnblockUserMutation,
-  useGetAllCustomersQuery,
-  useCompleteCustomerProfileMutation,
-} = customerApis
+export const { useGetAllCustomersQuery, useBlockUnblockCustomerMutation } =
+  customerApis

@@ -1,8 +1,9 @@
 import { Table, Button } from 'antd'
 import { FaArrowLeft } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 const Services = () => {
+  const navigate = useNavigate()
   const columns = [
     {
       title: '#',
@@ -77,7 +78,10 @@ const Services = () => {
 
   return (
     <div className="w-full py-8">
-      <div className="mb-6 flex items-center space-x-2">
+      <div
+        className="mb-6 flex items-center space-x-2"
+        onClick={() => navigate(-1)}
+      >
         <Button
           icon={<FaArrowLeft />}
           className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"

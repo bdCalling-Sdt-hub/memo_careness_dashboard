@@ -3,6 +3,7 @@ import login from '../../assets/login.png' // Importing the login image
 import { Link } from 'react-router-dom'
 import { useLoginMutation } from '../../Redux/authApis'
 import toast from 'react-hot-toast'
+import { jwtDecode } from 'jwt-decode'
 
 const Login = () => {
   const [loginUser] = useLoginMutation()
@@ -14,6 +15,9 @@ const Login = () => {
         console.log(res)
         localStorage.setItem('token', JSON.stringify(res?.data?.accessToken))
         toast.success(res?.message)
+        const decoded = jwtDecode(localStorage.getItem('token'))
+        console.log(decoded)
+        localStorage.setItem('role', JSON.stringify(decoded?.role))
         window.location.href = '/'
       })
       .catch((err) => {

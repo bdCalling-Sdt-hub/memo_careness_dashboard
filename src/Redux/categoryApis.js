@@ -4,29 +4,33 @@ const categoryApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     createCategory: builder.mutation({
       query: (data) => ({
-        url: '/category/create-category',
+        url: '/shop-category/create',
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ['category'],
     }),
     updateCategory: builder.mutation({
       query: ({ id, data }) => ({
-        url: `/category/update-category/${id}`,
+        url: `/shop-category/update/${id}`,
         method: 'PATCH',
         body: data,
       }),
+      invalidatesTags: ['category'],
     }),
     getMyCategories: builder.query({
       query: () => ({
-        url: '/category/my-categories',
+        url: '/shop-category/get-all',
         method: 'GET',
       }),
+      providesTags: ['category'],
     }),
     deleteCategory: builder.mutation({
       query: (id) => ({
-        url: `/category/delete-category/${id}`,
+        url: `/shop-category/delete/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['category'],
     }),
   }),
 })

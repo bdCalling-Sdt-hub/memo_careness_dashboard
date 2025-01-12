@@ -4,10 +4,13 @@ import { FaArrowLeft } from 'react-icons/fa'
 import PersonalDetails from '../components/Profile/PersonalDetails'
 import AccountDetails from '../components/Profile/AccountDetails'
 import ManageAccounts from '../components/Profile/ManageAccounts.JSX'
+import { useNavigate } from 'react-router-dom'
 
 const Profile = () => {
+  const navigate = useNavigate()
   const [activeTab, setActiveTab] = useState('1')
-
+  const role = localStorage.getItem('role')
+  console.log(role)
   useEffect(() => {
     const storedTab = localStorage.getItem('activeTab')
     if (storedTab) {
@@ -61,7 +64,10 @@ const Profile = () => {
   return (
     <div className="w-full px-6 py-8 bg-white rounded-lg shadow-md">
       {/* Header Section */}
-      <div className="flex items-center space-x-2 mb-6">
+      <div
+        className="flex items-center space-x-2 mb-6"
+        onClick={() => navigate(-1)}
+      >
         <button className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 px-3 border rounded-md">
           <FaArrowLeft />
         </button>

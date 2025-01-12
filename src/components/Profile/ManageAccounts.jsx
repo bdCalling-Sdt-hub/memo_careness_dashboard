@@ -18,7 +18,7 @@ import {
 } from '../../Redux/manageAccountsApis'
 import toast from 'react-hot-toast'
 
-const ManageAccounts = ({ onAdminAdded }) => {
+const ManageAccounts = () => {
   const {
     data: adminData,
     isLoading,
@@ -101,6 +101,7 @@ const ManageAccounts = ({ onAdminAdded }) => {
             : account
         )
       )
+      console.log(error)
 
       message.error('Failed to update admin status. Please try again.')
     }
@@ -115,6 +116,7 @@ const ManageAccounts = ({ onAdminAdded }) => {
       setAccounts(accounts.filter((account) => account.key !== key))
       message.success('Admin account deleted successfully!')
     } catch (error) {
+      console.log(error)
       message.error('Failed to delete admin account. Please try again.')
     }
   }

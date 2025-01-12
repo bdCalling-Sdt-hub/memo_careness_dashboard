@@ -1,24 +1,29 @@
-import React, { useState } from "react";
-import JoditEditor from "jodit-react";
+import { useState } from 'react'
+import JoditEditor from 'jodit-react'
+import { useNavigate } from 'react-router-dom'
 
 const TermsConditions = () => {
-  const [content, setContent] = useState("");
+  const navigate = useNavigate()
+  const [content, setContent] = useState('')
 
   // Handle Clear action
   const handleClear = () => {
-    setContent("");
-  };
+    setContent('')
+  }
 
   // Handle Save action
   const handleSave = () => {
-    console.log("Saved Content:", content);
-    alert("Terms & Conditions saved successfully!");
-  };
+    console.log('Saved Content:', content)
+    alert('Terms & Conditions saved successfully!')
+  }
 
   return (
     <div className="w-full px-6 py-8 bg-white rounded-lg shadow-md mt-6">
       {/* Header Section */}
-      <div className="flex items-center space-x-2 mb-6">
+      <div
+        className="flex items-center space-x-2 mb-6"
+        onClick={() => navigate(-1)}
+      >
         <button className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 px-3 border rounded-md">
           &#8592; {/* Left Arrow */}
         </button>
@@ -32,9 +37,10 @@ const TermsConditions = () => {
           value={content}
           onChange={(newContent) => setContent(newContent)}
           config={{
-            buttons: "bold,italic,underline,|,ul,ol,|,h1,h2,paragraph,|,align,|,image,link,|,source",
+            buttons:
+              'bold,italic,underline,|,ul,ol,|,h1,h2,paragraph,|,align,|,image,link,|,source',
             height: 400,
-            placeholder: "Type anything...",
+            placeholder: 'Type anything...',
           }}
           className="border rounded-md"
         />
@@ -56,7 +62,7 @@ const TermsConditions = () => {
         </button>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default TermsConditions;
+export default TermsConditions

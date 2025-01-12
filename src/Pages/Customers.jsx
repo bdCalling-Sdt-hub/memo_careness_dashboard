@@ -1,180 +1,180 @@
-import React from "react";
-import { Table, Input, Select, Button, Switch } from "antd";
-import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { AiOutlineSearch } from "react-icons/ai";
+import { Table, Input, Select, Button, Switch, message, Spin } from 'antd'
+import { FaArrowLeft } from 'react-icons/fa'
+import { AiOutlineSearch } from 'react-icons/ai'
+import { useNavigate } from 'react-router-dom'
+import {
+  useGetAllCustomersQuery,
+  useBlockUnblockCustomerMutation,
+} from '../Redux/customerApis'
+import { url } from '../Redux/server'
+import { useState } from 'react'
 
 const Customers = () => {
-    const columns = [
-        {
-            title: "#",
-            dataIndex: "index",
-            key: "index",
-            align: "center",
-        },
-        {
-            title: "Customer Name",
-            dataIndex: "customerName",
-            key: "customerName",
-            render: (text, record) => (
-                <div className="flex items-center space-x-3">
-                    <img
-                        src={record.image}
-                        alt={text}
-                        className="w-8 h-8 rounded-full"
-                    />
-                    <span>{text}</span>
-                </div>
-            ),
-        },
-        {
-            title: "City",
-            dataIndex: "city",
-            key: "city",
-        },
-        {
-            title: "Gender",
-            dataIndex: "gender",
-            key: "gender",
-        },
-        {
-            title: "Contact",
-            dataIndex: "contact",
-            key: "contact",
-        },
-        // {
-        //     title: "Spendings",
-        //     dataIndex: "spendings",
-        //     key: "spendings",
-        // },
-        {
-            title: "Block / Unblock",
-            key: "block",
-            render: (_, record) => (
-                <Switch
-                    style={{
-                        backgroundColor: "green",
-                        // backgroundColor: record.status === "Active" ? "green":"gray",
-                    }}
-                    defaultChecked
-                    // className={record.status === "Active" ? "bg-green-500" : "bg-gray-300"}
-                    checkedChildren=""
-                    unCheckedChildren=""
-                />
-            ),
-        },
-    ];
+  const navigate = useNavigate()
+  const { data: customerData, isLoading, isError } = useGetAllCustomersQuery()
+  const [blockUnblockCustomer] = useBlockUnblockCustomerMutation()
+  const [searchText, setSearchText] = useState('')
+  const [status, setStatus] = useState('all')
 
-    const data = [
-        {
-            key: "1",
-            index: "01",
-            customerName: "Cameron Williamson",
-            city: "Berlin",
-            gender: "Male",
-            contact: "+9724545643",
-            spendings: "€150",
-            image: "https://via.placeholder.com/30",
-        },
-        {
-            key: "2",
-            index: "02",
-            customerName: "Floyd Miles",
-            city: "Frankfurt",
-            gender: "Female",
-            contact: "+9724545643",
-            spendings: "€190",
-            image: "https://via.placeholder.com/30",
-        },
-        {
-            key: "3",
-            index: "03",
-            customerName: "Leslie Alexander",
-            city: "Berlin",
-            gender: "Male",
-            contact: "+9724545643",
-            spendings: "€150",
-            image: "https://via.placeholder.com/30",
-        },
-        {
-            key: "4",
-            index: "04",
-            customerName: "Dianne Russell",
-            city: "Berlin",
-            gender: "Male",
-            contact: "+9724545643",
-            spendings: "€150",
-            image: "https://via.placeholder.com/30",
-        },
-        {
-            key: "5",
-            index: "05",
-            customerName: "Ronald Richards",
-            city: "Berlin",
-            gender: "Male",
-            contact: "+9724545643",
-            spendings: "€150",
-            image: "https://via.placeholder.com/30",
-        },
-    ];
-
+  if (isLoading) {
     return (
-        <div className="w-full py-8">
-            {/* Header Section */}
-            <div className="flex items-center justify-between mb-6">
-                <div className="flex items-center space-x-2">
-                    <Button
-                        icon={<FaArrowLeft />}
-                        className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
-                    />
-                    <h1 className="text-xl font-semibold">Customers (1766)</h1>
-                </div>
-                <div className="flex items-center space-x-4">
-                    <Select
-                        defaultValue="All customers"
-                        options={[
-                            { value: "all", label: "All customers" },
-                            { value: "male", label: "Male" },
-                            { value: "female", label: "Female" },
-                        ]}
-                        className="w-40"
-                    />
-                    <Input
-                        prefix={<AiOutlineSearch className="text-gray-400" />}
-                        placeholder="Search"
-                        className="w-60"
-                    />
-                </div>
-            </div>
+      <div className="w-full flex justify-center items-center h-64">
+        <Spin tip="Loading customer data..." />
+      </div>
+    )
+  }
 
-            {/* Table Section */}
-            <Table
-                columns={columns}
-                dataSource={data}
-                pagination={{
-                    position: ["bottomCenter"],
-                    defaultPageSize: 8,
-                    showSizeChanger: false,
-                    nextIcon: (
-                        <Button
-                            className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border absolute right-0"
-                        >
-                            Next <FaArrowRight />
-                        </Button>
-                    ),
-                    prevIcon: (
-                        <Button
-                            icon={<FaArrowLeft />}
-                            className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border absolute left-0"
-                        >
-                            Previous
-                        </Button>
-                    ),
-                }}
-                bordered
-                rowClassName="text-sm"
-            />
+  if (isError) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <p>Failed to load customer data. Please try again later.</p>
+      </div>
+    )
+  }
+
+  const handlePaginationChange = (page, pageSize) => {
+    console.log('Page:', page, 'PageSize:', pageSize)
+  }
+
+  const columns = [
+    {
+      title: '#',
+      dataIndex: 'index',
+      key: 'index',
+      align: 'center',
+    },
+    {
+      title: 'Customer Name',
+      dataIndex: 'customerName',
+      key: 'customerName',
+      render: (text, record) => (
+        <div className="flex items-center space-x-3">
+          <img src={record.image} alt={text} className="w-8 h-8 rounded-full" />
+          <span>{text}</span>
         </div>
-    );
-};
+      ),
+    },
+    {
+      title: 'City',
+      dataIndex: 'city',
+      key: 'city',
+    },
+    {
+      title: 'Gender',
+      dataIndex: 'gender',
+      key: 'gender',
+    },
+    {
+      title: 'Contact',
+      dataIndex: 'contact',
+      key: 'contact',
+    },
+    {
+      title: 'Block / Unblock',
+      key: 'block',
+      render: (_, record) => (
+        <Switch
+          checked={record.status === 'in-progress'}
+          onChange={(checked) => handleBlockUnblock(record, checked)}
+          checkedChildren="Active"
+          unCheckedChildren="Inactive"
+        />
+      ),
+    },
+  ]
 
-export default Customers;
+  const data = customerData?.data?.result
+    .filter((customer) => {
+      if (status === 'active') {
+        return customer.user.status === 'in-progress' // Assuming active users have status 'in-progress'
+      } else if (status === 'inactive') {
+        return customer.user.status === 'blocked' // Assuming inactive users have status 'blocked'
+      }
+      return true // For 'all' status, return all customers
+    })
+    .filter((customer) => {
+      // Filter by search query (search by first or last name)
+      const name = `${customer.firstName} ${customer.lastName}`.toLowerCase()
+      const search = searchText.toLowerCase()
+      return name.includes(search)
+    })
+    .map((customer, index) => ({
+      key: customer._id,
+      user: customer?.user._id,
+      index: index + 1,
+      customerName: `${customer.firstName} ${customer.lastName}`,
+      city: customer.city || 'Not provided',
+      gender: customer.gender || 'Not specified',
+      contact: customer.phoneNumber || 'Not provided',
+      status: customer.user.status,
+      image: customer.profile_image
+        ? `${url}/${customer.profile_image}`
+        : `https://cdn-icons-png.flaticon.com/512/149/149071.png`,
+    }))
+
+  const handleBlockUnblock = async (customer, checked) => {
+    const updatedStatus = checked ? 'in-progress' : 'blocked'
+    try {
+      await blockUnblockCustomer({
+        id: customer?.user,
+        status: updatedStatus,
+      }).unwrap()
+      message.success(`Customer ${updatedStatus} successfully!`)
+    } catch (error) {
+      message.error('Failed to update customer status. Please try again.')
+    }
+  }
+
+  return (
+    <div className="w-full py-8">
+      <div className="flex items-center justify-between mb-6">
+        <div
+          className="flex items-center space-x-2 cursor-pointer"
+          onClick={() => navigate(-1)}
+        >
+          <Button
+            icon={<FaArrowLeft />}
+            className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
+          />
+          <h1 className="text-xl font-semibold">
+            Customers ({customerData?.data?.meta?.total})
+          </h1>
+        </div>
+        <div className="flex items-center space-x-4">
+          <Select
+            defaultValue="All customers"
+            options={[
+              { value: 'all', label: 'All customers' },
+              { value: 'active', label: 'Active' },
+              { value: 'inactive', label: 'Inactive' },
+            ]}
+            className="w-40"
+            onChange={(value) => setStatus(value)}
+          />
+          <Input
+            prefix={<AiOutlineSearch className="text-gray-400" />}
+            placeholder="Search"
+            className="w-60"
+            value={searchText}
+            onChange={(e) => setSearchText(e.target.value)}
+          />
+        </div>
+      </div>
+
+      <Table
+        columns={columns}
+        dataSource={data}
+        pagination={{
+          position: ['bottomCenter'],
+          defaultPageSize: 8,
+          showSizeChanger: false,
+          onChange: handlePaginationChange,
+        }}
+        bordered
+        rowClassName="text-sm"
+      />
+    </div>
+  )
+}
+
+export default Customers
