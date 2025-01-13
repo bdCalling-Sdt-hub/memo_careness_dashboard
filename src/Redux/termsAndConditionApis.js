@@ -2,7 +2,7 @@ import { baseApis } from './baseApis'
 
 const termsAndConditionApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
-    getPrivacyPolicy: builder.query({
+    getTermsAndConditions: builder.query({
       query: () => {
         return {
           url: '/manage/get-terms-conditions',
@@ -11,7 +11,7 @@ const termsAndConditionApis = baseApis.injectEndpoints({
       },
       providesTags: ['privacyPolicy'],
     }),
-    createPrivacyPolicy: builder.mutation({
+    createTermsAndConditions: builder.mutation({
       query: (data) => {
         return {
           url: '/manage/add-terms-conditions',
@@ -24,7 +24,9 @@ const termsAndConditionApis = baseApis.injectEndpoints({
   }),
 })
 
-export const { useGetPrivacyPolicyQuery, useCreatePrivacyPolicyMutation } =
-  termsAndConditionApis
+export const {
+  useGetTermsAndConditionsQuery,
+  useCreateTermsAndConditionsMutation,
+} = termsAndConditionApis
 
 export default termsAndConditionApis

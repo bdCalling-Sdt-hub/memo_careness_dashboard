@@ -1,31 +1,74 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import JoditEditor from 'jodit-react'
 import { useNavigate } from 'react-router-dom'
 import {
-  useCreateAdminMutation,
-  useGetAllAdminInformationQuery,
-} from '../Redux/manageAccountsApis'
+  useCreateTermsAndConditionsMutation,
+  useGetTermsAndConditionsQuery,
+} from '../Redux/termsAndConditionApis'
+import toast from 'react-hot-toast'
 
 const TermsConditions = () => {
   const navigate = useNavigate()
-  const [content, setContent] = useState('')
+  const [clientContent, setClientContent] = useState('')
+  const [customerContent, setCustomerContent] = useState('')
+  const [createTasks] = useCreateTermsAndConditionsMutation()
 
   const {
     data: termsData,
     isLoading,
     isError,
-  } = useGetAllAdminInformationQuery()
-  const [createTasks] = useCreateAdminMutation()
+  } = useGetTermsAndConditionsQuery()
 
-  // Handle Clear action
-  const handleClear = () => {
-    setContent('')
+  useEffect(() => {
+    if (termsData?.data) {
+      setClientContent(termsData?.data?.descriptionForClientApp || '')
+      setCustomerContent(termsData?.data?.descriptionForCustomerApp || '')
+    }
+  }, [termsData])
+
+  // console.log(clientContent)
+  // Handle loading and error states
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+  if (isError) {
+    return <div>Error loading terms!</div>
   }
 
-  // Handle Save action
-  const handleSave = () => {
-    console.log('Saved Content:', content)
-    alert('Terms & Conditions saved successfully!')
+  // Handle Clear action for Client Terms
+  const handleClientClear = () => {
+    setClientContent('')
+  }
+
+  // Handle Save action for Client Terms
+  const handleClientSave = async () => {
+    try {
+      await createTasks({
+        descriptionForClientApp: clientContent,
+      })
+      toast.success('Client Terms & Conditions saved successfully!')
+    } catch (error) {
+      console.error('Failed to save client terms:', error)
+      toast.error('Failed to save client terms!')
+    }
+  }
+
+  // Handle Clear action for Customer Terms
+  const handleCustomerClear = () => {
+    setCustomerContent('')
+  }
+
+  // Handle Save action for Customer Terms
+  const handleCustomerSave = async () => {
+    try {
+      await createTasks({
+        descriptionForCustomerApp: customerContent,
+      })
+      toast.success('Customer Terms & Conditions saved successfully!')
+    } catch (error) {
+      console.error('Failed to save customer terms:', error)
+      toast.error('Failed to save customer terms!')
+    }
   }
 
   return (
@@ -41,36 +84,76 @@ const TermsConditions = () => {
         <h1 className="text-xl font-semibold">Terms & Conditions</h1>
       </div>
 
-      {/* Editor Section */}
-      <div className="mb-4">
-        <JoditEditor
-          id="editor"
-          value={content}
-          onBlur={(newContent) => setContent(newContent)}
-          config={{
-            buttons:
-              'bold,italic,underline,|,ul,ol,|,h1,h2,paragraph,|,align,|,image,link,|,source',
-            height: 400,
-            placeholder: 'Type anything...',
-          }}
-          className="border rounded-md"
-        />
-      </div>
+      <div className="flex space-x-6 justify-between w-full">
+        {/* Customer's Terms Editor */}
+        <section className="border p-5 w-full">
+          <header className="text-center font-bold text-xl">
+            Customer&apos;s terms and conditions
+          </header>
+          <div className="mb-4">
+            <JoditEditor
+              id="customerContent"
+              value={customerContent} // Bound to customer content, can be HTML
+              onBlur={(newContent) => setCustomerContent(newContent)} // Get updated content from editor
+              config={{
+                buttons:
+                  'bold,italic,underline,|,ul,ol,|,h1,h2,paragraph,|,align,|,image,link,|,source', // Configure editor
+                height: 400,
+                placeholder: 'Type anything...',
+              }}
+              className="border rounded-md"
+            />
+          </div>
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={handleCustomerClear}
+              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100"
+            >
+              Clear
+            </button>
+            <button
+              onClick={handleCustomerSave}
+              className="px-6 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+            >
+              Save
+            </button>
+          </div>
+        </section>
 
-      {/* Buttons Section */}
-      <div className="flex justify-end space-x-4">
-        <button
-          onClick={handleClear}
-          className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100"
-        >
-          Clear
-        </button>
-        <button
-          onClick={handleSave}
-          className="px-6 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
-        >
-          Save
-        </button>
+        {/* Client's Terms Editor */}
+        <section className="border p-5 w-full">
+          <header className="text-center font-bold text-xl">
+            Client&apos;s terms and conditions
+          </header>
+          <div className="mb-4">
+            <JoditEditor
+              id="clientContent"
+              value={clientContent} // Bound to client content, can be HTML
+              onBlur={(clientContent) => setClientContent(clientContent)} // Get updated content from editor
+              config={{
+                buttons:
+                  'bold,italic,underline,|,ul,ol,|,h1,h2,paragraph,|,align,|,image,link,|,source', // Configure editor
+                height: 400,
+                placeholder: 'Type anything...',
+              }}
+              className="border rounded-md"
+            />
+          </div>
+          <div className="flex justify-end space-x-4">
+            <button
+              onClick={handleClientClear}
+              className="px-6 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-100"
+            >
+              Clear
+            </button>
+            <button
+              onClick={handleClientSave}
+              className="px-6 py-2 bg-teal-600 text-white rounded-md hover:bg-teal-700"
+            >
+              Save
+            </button>
+          </div>
+        </section>
       </div>
     </div>
   )

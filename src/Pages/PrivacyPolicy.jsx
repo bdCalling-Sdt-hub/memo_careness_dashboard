@@ -35,7 +35,7 @@ const PrivacyPolicy = () => {
         <JoditEditor
           id="editor"
           value={content}
-          onChange={(newContent) => setContent(newContent)}
+          onBlur={(newContent) => setContent(newContent)}
           config={{
             buttons:
               'bold,italic,underline,|,ul,ol,|,h1,h2,paragraph,|,align,|,image,link,|,source',
