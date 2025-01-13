@@ -19,9 +19,13 @@ const categoryApis = baseApis.injectEndpoints({
       invalidatesTags: ['category'],
     }),
     getMyCategories: builder.query({
-      query: () => ({
+      query: ({ page, limit }) => ({
         url: '/shop-category/get-all',
         method: 'GET',
+        params: {
+          page: page,
+          limit: limit,
+        },
       }),
       providesTags: ['category'],
     }),

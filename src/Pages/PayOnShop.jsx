@@ -1,76 +1,43 @@
 import { useState } from 'react'
-import { Table, Button, Input } from 'antd'
+import { Table, Button, Input, Spin } from 'antd'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { SearchOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import {
+  useGetAllShopDataQuery,
+  useNotifyAllShopMutation,
+  useNotifyOneShopMutation,
+} from '../Redux/payOnShopApis'
+import { url } from '../Redux/server'
 
 const PayOnShop = () => {
   const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(9) // Default page size
+  const [searchText, setSearchText] = useState('')
 
-  // Table data
-  const dataSource = [
-    {
-      key: '01',
-      shopName: 'Cameron Salons',
-      amount: '$344',
-      avatar: 'https://via.placeholder.com/40', // Replace with actual image URL
-    },
-    {
-      key: '02',
-      shopName: 'Nice Beauty Center',
-      amount: '$457',
-      avatar: 'https://via.placeholder.com/40',
-    },
-    {
-      key: '03',
-      shopName: 'Cameron Salons',
-      amount: '$567',
-      avatar: 'https://via.placeholder.com/40',
-    },
-    {
-      key: '04',
-      shopName: 'Cameron Salons',
-      amount: '$561',
-      avatar: 'https://via.placeholder.com/40',
-    },
-    {
-      key: '05',
-      shopName: 'Cameron Salons',
-      amount: '$585',
-      avatar: 'https://via.placeholder.com/40',
-    },
-    {
-      key: '06',
-      shopName: 'Cameron Salons',
-      amount: '$896',
-      avatar: 'https://via.placeholder.com/40',
-    },
-    {
-      key: '07',
-      shopName: 'Cameron Salons',
-      amount: '$235',
-      avatar: 'https://via.placeholder.com/40',
-    },
-    {
-      key: '08',
-      shopName: 'Cameron Salons',
-      amount: '$762',
-      avatar: 'https://via.placeholder.com/40',
-    },
-  ]
+  // useGetPrivacyQuery,
+  // useNotifyAllShopMutation,
+  // useNotifyOneShopMutation,
 
-  // Filter data based on the search term
-  const filteredData = dataSource.filter((item) =>
-    item.shopName.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const [notifyAllShop] = useNotifyAllShopMutation()
+  const [notifyOneShop] = useNotifyOneShopMutation()
+
+  const {
+    data: payOnShopData,
+    isLoading,
+    isError,
+  } = useGetAllShopDataQuery({
+    page: currentPage,
+    limit: pageSize,
+  })
 
   // Columns definition
   const columns = [
     {
       title: '#',
-      dataIndex: 'key',
-      key: 'key',
+      dataIndex: 'index',
+      key: 'index',
       align: 'center',
       render: (text) => <span className="text-gray-500">{text}</span>,
     },
@@ -81,7 +48,7 @@ const PayOnShop = () => {
       render: (text, record) => (
         <div className="flex items-center">
           <img
-            src={record.avatar}
+            src={record.image}
             alt="shop"
             className="w-8 h-8 rounded-full mr-2"
           />
@@ -107,6 +74,33 @@ const PayOnShop = () => {
       ),
     },
   ]
+  // console.log(payOnShopData)
+  const data = payOnShopData?.data?.result.map((shopData, index) => ({
+    key: shopData._id,
+    index: index + 1,
+    shopName: shopData.shopName || 'Not provided',
+    amount: shopData.payOnShopChargeDueAmount || 0,
+    image:
+      shopData.shopImages && shopData.shopImages[0]
+        ? `${url}/${shopData.shopImages[0]}`
+        : `https://cdn-icons-png.flaticon.com/512/149/149071.png`,
+  }))
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <Spin tip="Loading customer data..." />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <p>Failed to load customer data. Please try again later.</p>
+      </div>
+    )
+  }
 
   return (
     <div className="w-full px-6 py-8 bg-white rounded-lg shadow-md">
@@ -120,23 +114,27 @@ const PayOnShop = () => {
             icon={<FaArrowLeft />}
             className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
           />
-          <h1 className="text-xl font-semibold">Pay On Shop (08)</h1>
+          <h1 className="text-xl font-semibold">
+            Pay On Shop ({payOnShopData?.data?.meta?.total || 0})
+          </h1>
         </div>
         <Input
           prefix={<SearchOutlined className="text-gray-400" />}
           placeholder="Search Shop"
           className="w-60 h-[42px]"
-          onChange={(e) => setSearchTerm(e.target.value)}
+          onChange={(e) => setSearchText(e.target.value)}
         />
       </div>
 
       {/* Table Section */}
       <Table
         columns={columns}
-        dataSource={filteredData}
+        dataSource={data}
         pagination={{
-          pageSize: 8,
-          showSizeChanger: false,
+          current: currentPage,
+          pageSize: pageSize,
+          total: payOnShopData?.data?.meta?.total,
+          onChange: (page) => setCurrentPage(page),
           position: ['bottomCenter'],
           nextIcon: (
             <Button className="bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">

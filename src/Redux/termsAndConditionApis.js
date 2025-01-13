@@ -9,7 +9,7 @@ const termsAndConditionApis = baseApis.injectEndpoints({
           method: 'GET',
         }
       },
-      providesTags: ['privacyPolicy'],
+      providesTags: ['termsAndCondition'],
     }),
     createTermsAndConditions: builder.mutation({
       query: (data) => {
@@ -19,7 +19,7 @@ const termsAndConditionApis = baseApis.injectEndpoints({
           body: data,
         }
       },
-      invalidatesTags: ['privacyPolicy'],
+      invalidatesTags: ['termsAndCondition'],
     }),
   }),
 })

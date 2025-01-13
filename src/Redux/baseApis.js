@@ -9,6 +9,12 @@ export const baseApis = createApi({
       Authorization: `${JSON.parse(localStorage.getItem('token')) || ''}`,
     },
   }),
-  tagTypes: ['Post', 'customers', 'category', 'privacyPolicy'],
+  tagTypes: [
+    'Post',
+    'customers',
+    'category',
+    'privacyPolicy',
+    'termsAndCondition',
+  ],
   endpoints: () => ({}),
 })

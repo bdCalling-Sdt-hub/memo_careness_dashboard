@@ -1,23 +1,19 @@
-import { baseApis } from "./baseApis";
+import { baseApis } from './baseApis'
 
 const transactionApis = baseApis.injectEndpoints({
-    endpoints: (builder) => ({
-        getAllTransactions: builder.query({
-            query: () => ({
-                url: '/transaction/get-all-transaction',
-                method: 'GET',
-            }),
-        }),
-        getShopTransactions: builder.query({
-            query: () => ({
-                url: '/transaction/get-shop-transaction',
-                method: 'GET',
-            }),
-        }),
+  endpoints: (builder) => ({
+    getAllTransactions: builder.query({
+      query: ({ page, limit, senderEntityType }) => ({
+        url: '/transaction/get-all-transaction',
+        method: 'GET',
+        params: {
+          page: page,
+          limit: limit,
+          senderEntityType: senderEntityType,
+        },
+      }),
     }),
-});
+  }),
+})
 
-export const {
-    useGetAllTransactionsQuery,
-    useGetShopTransactionsQuery,
-} = transactionApis;
+export const { useGetAllTransactionsQuery } = transactionApis

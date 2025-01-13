@@ -10,7 +10,7 @@ import {
   Upload,
   Image,
 } from 'antd'
-import { FaArrowLeft } from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { DeleteOutlined, UploadOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -23,9 +23,18 @@ import { useState } from 'react'
 
 const Category = () => {
   const navigate = useNavigate()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10) // Default page size
 
   // Get all categories from the backend
-  const { data: categoryData, isLoading, isError } = useGetMyCategoriesQuery()
+  const {
+    data: categoryData,
+    isLoading,
+    isError,
+  } = useGetMyCategoriesQuery({
+    page: currentPage,
+    limit: pageSize,
+  })
   const [createCategory] = useCreateCategoryMutation()
   const [updateCategory] = useUpdateCategoryMutation()
   const [deleteCategory] = useDeleteCategoryMutation()
@@ -163,7 +172,9 @@ const Category = () => {
             icon={<FaArrowLeft />}
             className="bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
           />
-          <h1 className="text-xl font-semibold">Categories</h1>
+          <h1 className="text-xl font-semibold">
+            Categories ({categoryData?.data?.meta?.total})
+          </h1>
         </div>
         {/* Add Category Section */}
         <div>
@@ -181,7 +192,25 @@ const Category = () => {
       <Table
         columns={columns}
         dataSource={categoryData?.data?.result}
-        pagination={false}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: categoryData?.data?.meta?.total,
+          onChange: (page) => setCurrentPage(page),
+          position: ['bottomCenter'],
+          defaultPageSize: 10,
+          showSizeChanger: false,
+          nextIcon: (
+            <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">
+              Next <FaArrowRight />
+            </Button>
+          ),
+          prevIcon: (
+            <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">
+              <FaArrowLeft /> Previous
+            </Button>
+          ),
+        }}
         bordered
         rowClassName="text-sm"
       />

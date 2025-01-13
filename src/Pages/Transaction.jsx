@@ -1,92 +1,62 @@
-import React, { useState } from 'react'
-import { Table, Input, Select, Button } from 'antd'
+import { useState } from 'react'
+import { Table, Select, Button, Spin } from 'antd'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
-import { SearchOutlined } from '@ant-design/icons'
 import { useNavigate } from 'react-router-dom'
+import { useGetAllTransactionsQuery } from '../Redux/transactionApis'
+import { url } from '../Redux/server'
 
 const Transaction = () => {
   const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState('')
+  const [status, setStatus] = useState('Customer')
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(9)
 
-  // Table data
-  const dataSource = [
-    {
-      key: '01',
-      date: '12/06/24',
-      name: 'Cameron Williamson',
-      avatar: 'https://via.placeholder.com/40',
-      amount: '€150',
-      paymentType: 'Online Payment',
-    },
-    {
-      key: '02',
-      date: '11/06/24',
-      name: 'Floyd Miles',
-      avatar: 'https://via.placeholder.com/40',
-      amount: '€150',
-      paymentType: 'Online Payment',
-    },
-    {
-      key: '03',
-      date: '10/06/24',
-      name: 'Leslie Alexander',
-      avatar: 'https://via.placeholder.com/40',
-      amount: '€150',
-      paymentType: 'Online Payment',
-    },
-    {
-      key: '04',
-      date: '08/06/24',
-      name: 'Dianne Russell',
-      avatar: 'https://via.placeholder.com/40',
-      amount: '€150',
-      paymentType: 'Online Payment',
-    },
-    {
-      key: '05',
-      date: '07/06/24',
-      name: 'Ronald Richards',
-      avatar: 'https://via.placeholder.com/40',
-      amount: '€150',
-      paymentType: 'Online Payment',
-    },
-    {
-      key: '06',
-      date: '04/06/24',
-      name: 'Savannah Nguyen',
-      avatar: 'https://via.placeholder.com/40',
-      amount: '€150',
-      paymentType: 'Online Payment',
-    },
-    {
-      key: '07',
-      date: '03/06/24',
-      name: 'Kathryn Murphy',
-      avatar: 'https://via.placeholder.com/40',
-      amount: '€150',
-      paymentType: 'Online Payment',
-    },
-    {
-      key: '08',
-      date: '01/06/24',
-      name: 'Brooklyn Simmons',
-      avatar: 'https://via.placeholder.com/40',
-      amount: '€150',
-      paymentType: 'Online Payment',
-    },
-  ]
+  const {
+    data: transactionData,
+    isLoading,
+    isError,
+  } = useGetAllTransactionsQuery({
+    page: currentPage,
+    limit: pageSize,
+    ...(status === 'all' ? {} : { senderEntityType: status }),
+  })
 
-  // Filter data based on the search term
-  const filteredData = dataSource.filter((item) =>
-    item.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )
+  const data = transactionData?.data?.result.map((transaction, index) => ({
+    key: transaction._id,
+    index: index + 1,
+    date: transaction.createdAt,
+    name: `${transaction.senderEntityId?.firstName || ''} ${
+      transaction.senderEntityId?.lastName || ''
+    }`,
+    amount: transaction.amount,
+    type: transaction.type,
+    sales: transaction.amount || 0,
+    image: transaction?.senderEntityId?.profile_image
+      ? `${url}/${transaction.senderEntityId.profile_image}`
+      : `https://cdn-icons-png.flaticon.com/512/149/149071.png`,
+  }))
 
-  // Columns definition
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <Spin tip="Loading customer data..." />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <p>Failed to load customer data. Please try again later.</p>
+      </div>
+    )
+  }
+
   const columns = [
     {
       title: '#',
-      dataIndex: 'key',
-      key: 'key',
+      dataIndex: 'index',
+      key: 'index',
       align: 'center',
       render: (text) => <span className="text-gray-500">{text}</span>,
     },
@@ -95,7 +65,17 @@ const Transaction = () => {
       dataIndex: 'date',
       key: 'date',
       align: 'center',
-      render: (text) => <span className="text-gray-600">{text}</span>,
+      render: (text) => (
+        <span className="text-gray-600">
+          {new Date(text).toLocaleString('en-GB', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+          })}
+        </span>
+      ),
     },
     {
       title: 'Name',
@@ -104,7 +84,7 @@ const Transaction = () => {
       render: (text, record) => (
         <div className="flex items-center space-x-3">
           <img
-            src={record.avatar}
+            src={record.image}
             alt="avatar"
             className="w-8 h-8 rounded-full"
           />
@@ -117,12 +97,12 @@ const Transaction = () => {
       dataIndex: 'amount',
       key: 'amount',
       align: 'right',
-      render: (text) => <span className="text-gray-600">{text}</span>,
+      render: (text) => <span className="text-gray-600">€{text}</span>,
     },
     {
       title: 'Payment Type',
-      dataIndex: 'paymentType',
-      key: 'paymentType',
+      dataIndex: 'type',
+      key: 'type',
       align: 'center',
       render: (text) => <span className="text-gray-500">{text}</span>,
     },
@@ -130,7 +110,6 @@ const Transaction = () => {
 
   return (
     <div className="w-full px-6 py-8 bg-white rounded-lg shadow-md">
-      {/* Header Section */}
       <div className="flex items-center justify-between mb-6">
         <div
           className="flex items-center space-x-2"
@@ -140,29 +119,32 @@ const Transaction = () => {
             icon={<FaArrowLeft />}
             className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
           />
-          <h1 className="text-xl font-semibold">Transaction</h1>
+          <h1 className="text-xl font-semibold">
+            Transaction ({transactionData?.data?.meta?.total})
+          </h1>
         </div>
         <div className="flex items-center space-x-4">
           <Select
-            defaultValue="Customer"
-            options={[{ value: 'customer', label: 'Customer' }]}
+            defaultValue="All Transaction"
+            options={[
+              { value: 'all', label: 'All Transaction' },
+              { value: 'Customer', label: 'Customer' },
+              { value: 'Client', label: 'Shop' },
+            ]}
             className="w-40"
-          />
-          <Input
-            prefix={<SearchOutlined className="text-gray-400" />}
-            placeholder="Search"
-            className="w-60"
-            onChange={(e) => setSearchTerm(e.target.value)}
+            onChange={(value) => setStatus(value)}
           />
         </div>
       </div>
 
-      {/* Table Section */}
       <Table
         columns={columns}
-        dataSource={filteredData}
+        dataSource={data}
         pagination={{
-          pageSize: 8,
+          current: currentPage,
+          pageSize: pageSize,
+          total: transactionData?.data?.meta?.total,
+          onChange: (page) => setCurrentPage(page),
           showSizeChanger: false,
           position: ['bottomCenter'],
           nextIcon: (

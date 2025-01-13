@@ -6,6 +6,7 @@ import {
   useGetTermsAndConditionsQuery,
 } from '../Redux/termsAndConditionApis'
 import toast from 'react-hot-toast'
+import { Spin } from 'antd'
 
 const TermsConditions = () => {
   const navigate = useNavigate()
@@ -26,13 +27,20 @@ const TermsConditions = () => {
     }
   }, [termsData])
 
-  // console.log(clientContent)
-  // Handle loading and error states
   if (isLoading) {
-    return <div>Loading...</div>
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <Spin tip="Loading customer data..." />
+      </div>
+    )
   }
+
   if (isError) {
-    return <div>Error loading terms!</div>
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <p>Failed to load customer data. Please try again later.</p>
+      </div>
+    )
   }
 
   // Handle Clear action for Client Terms
