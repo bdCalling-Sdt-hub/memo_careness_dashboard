@@ -9,16 +9,13 @@ import {
   useNotifyOneShopMutation,
 } from '../Redux/payOnShopApis'
 import { url } from '../Redux/server'
+import toast from 'react-hot-toast'
 
 const PayOnShop = () => {
   const navigate = useNavigate()
   const [currentPage, setCurrentPage] = useState(1)
   const [pageSize, setPageSize] = useState(9) // Default page size
   const [searchText, setSearchText] = useState('')
-
-  // useGetPrivacyQuery,
-  // useNotifyAllShopMutation,
-  // useNotifyOneShopMutation,
 
   const [notifyAllShop] = useNotifyAllShopMutation()
   const [notifyOneShop] = useNotifyOneShopMutation()
@@ -30,6 +27,7 @@ const PayOnShop = () => {
   } = useGetAllShopDataQuery({
     page: currentPage,
     limit: pageSize,
+    searchTerm: searchText,
   })
 
   // Columns definition
@@ -67,14 +65,17 @@ const PayOnShop = () => {
       title: 'Action',
       key: 'action',
       align: 'center',
-      render: () => (
-        <Button className="bg-green-100 text-green-700 border-none hover:bg-green-200 px-4 py-1 rounded-md">
+      render: (text, record) => (
+        <Button
+          className="bg-green-100 text-green-700 border-none hover:bg-green-200 px-4 py-1 rounded-md"
+          onClick={() => notifyOneShop({ id: record.key })}
+        >
           Notify
         </Button>
       ),
     },
   ]
-  // console.log(payOnShopData)
+
   const data = payOnShopData?.data?.result.map((shopData, index) => ({
     key: shopData._id,
     index: index + 1,
@@ -85,6 +86,16 @@ const PayOnShop = () => {
         ? `${url}/${shopData.shopImages[0]}`
         : `https://cdn-icons-png.flaticon.com/512/149/149071.png`,
   }))
+
+  const handleNotifyAllShops = async () => {
+    try {
+      await notifyAllShop()
+      toast.success('All shops notified successfully!')
+      console.log('All shops notified successfully')
+    } catch (error) {
+      console.error('Error notifying all shops:', error)
+    }
+  }
 
   if (isLoading) {
     return (
@@ -118,12 +129,22 @@ const PayOnShop = () => {
             Pay On Shop ({payOnShopData?.data?.meta?.total || 0})
           </h1>
         </div>
-        <Input
-          prefix={<SearchOutlined className="text-gray-400" />}
-          placeholder="Search Shop"
-          className="w-60 h-[42px]"
-          onChange={(e) => setSearchText(e.target.value)}
-        />
+        <div className="flex items-center space-x-4">
+          {currentPage === 1 && (
+            <Input
+              prefix={<SearchOutlined className="text-gray-400" />}
+              placeholder="Search Shop"
+              className="w-60 h-[42px]"
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          )}
+          <Button
+            onClick={handleNotifyAllShops}
+            className="bg-green-100 text-green-700 border-none hover:bg-green-200 px-4 py-5 border rounded-md"
+          >
+            Notify All Shops
+          </Button>
+        </div>
       </div>
 
       {/* Table Section */}

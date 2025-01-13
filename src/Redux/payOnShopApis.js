@@ -3,13 +3,14 @@ import { baseApis } from './baseApis'
 const payOnShopApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getAllShopData: builder.query({
-      query: ({ page, limit }) => {
+      query: ({ page, limit, searchTerm }) => {
         return {
           url: '/client/pay-on-shop-data',
           method: 'GET',
           params: {
             page: page,
             limit: limit,
+            searchTerm: searchTerm,
           },
         }
       },
@@ -25,11 +26,11 @@ const payOnShopApis = baseApis.injectEndpoints({
       invalidatesTags: ['payOnShop'],
     }),
     notifyOneShop: builder.mutation({
-      query: (data, id) => {
+      query: ( id) => {
         return {
           url: `/client/notify-single-shop/${id}`,
           method: 'POST',
-          body: data,
+          // body: data,
         }
       },
     }),
