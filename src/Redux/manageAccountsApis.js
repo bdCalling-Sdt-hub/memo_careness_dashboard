@@ -7,6 +7,7 @@ const manageAccountsApis = baseApis.injectEndpoints({
         url: '/admin/all-admins',
         method: 'GET',
       }),
+      providesTags: ['manageProfile'],
     }),
     updateAdminStatus: builder.mutation({
       query: ({ id, data }) => ({
@@ -14,6 +15,7 @@ const manageAccountsApis = baseApis.injectEndpoints({
         method: 'PATCH',
         body: data,
       }),
+      invalidatesTags: ['manageProfile'],
     }),
     createAdmin: builder.mutation({
       query: (data) => ({
@@ -21,12 +23,14 @@ const manageAccountsApis = baseApis.injectEndpoints({
         method: 'POST',
         body: data,
       }),
+      invalidatesTags: ['manageProfile'],
     }),
     deleteAdmin: builder.mutation({
       query: (id) => ({
         url: `/admin/delete-admin/${id}`,
         method: 'DELETE',
       }),
+      invalidatesTags: ['manageProfile'],
     }),
   }),
 })

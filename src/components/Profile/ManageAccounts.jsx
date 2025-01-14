@@ -57,8 +57,8 @@ const ManageAccounts = () => {
       setAccounts([...accounts, { ...response, key: response._id }])
       form.resetFields()
       message.success('Admin account created successfully!')
-      localStorage.setItem('activeTab', '3')
-      window.location.reload()
+      // localStorage.setItem('activeTab', '3')
+      // window.location.reload()
     } catch (error) {
       console.error('Error creating admin account:', error)
       message.error(
