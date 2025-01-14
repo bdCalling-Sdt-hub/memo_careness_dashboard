@@ -1,11 +1,45 @@
-import React from 'react'
-import { Table, Input, Select, Button, Switch, Dropdown, Menu } from 'antd'
+import { Table, Input, Button, Switch, Select, message, Spin } from 'antd'
 import { AiOutlineSearch, AiOutlineStar } from 'react-icons/ai'
-import { FaArrowLeft, FaArrowRight, FaFilter } from 'react-icons/fa'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import { useGetAllShopQuery, useUpdateShopMutation } from '../Redux/shopApis'
+import { useState } from 'react'
+import { url } from '../Redux/server'
 
 const Shops = () => {
   const navigate = useNavigate()
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(8)
+  const [searchText, setSearchText] = useState('')
+  const [status, setStatus] = useState()
+  const [updateShop] = useUpdateShopMutation()
+
+  const {
+    data: shopData,
+    isLoading,
+    isError,
+  } = useGetAllShopQuery({
+    page: currentPage,
+    limit: pageSize,
+    searchTerm: searchText,
+    status: status,
+  })
+
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <Spin tip="Loading category data..." />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <p>Failed to load category data. Please try again later.</p>
+      </div>
+    )
+  }
   const columns = [
     {
       title: '#',
@@ -20,7 +54,10 @@ const Shops = () => {
       key: 'shopName',
       render: (text, record) => (
         <div
-          onClick={() => navigate('/shop-details/id')}
+          onClick={() => {
+            localStorage.setItem('selectedShopName', record.shopName)
+            navigate(`/shop-details/${record.key}`)
+          }}
           className="flex items-center space-x-3 cursor-pointer select-none"
         >
           <img src={record.image} alt="shop" className="w-8 h-8 rounded-full" />
@@ -56,7 +93,7 @@ const Shops = () => {
       render: (status) => (
         <span
           className={`px-4 py-1 rounded-full text-sm ${
-            status === 'Active'
+            status === 'active'
               ? 'bg-green-100 text-green-600'
               : 'bg-red-100 text-red-600'
           }`}
@@ -68,117 +105,104 @@ const Shops = () => {
     {
       title: 'Block / Unblock',
       key: 'block',
-      render: (_, record) => (
-        <Switch
-          style={{
-            backgroundColor: 'green',
-            // backgroundColor: record.status === "Active" ? "green":"gray",
-          }}
-          defaultChecked
-          checkedChildren=""
-          unCheckedChildren=""
-        />
-      ),
+      render: (_, record) => {
+        return (
+          <Switch
+            checked={record.status === 'active'}
+            onChange={(checked) => handleVisibilityToggle(record.key, checked)}
+            checkedChildren="active"
+            unCheckedChildren="inactive"
+          />
+        )
+      },
     },
   ]
-
-  const data = [
-    {
-      key: '1',
-      index: '01',
-      shopName: 'Cameron Salons',
-      city: 'Berlin',
-      rating: 5.0,
-      contact: '+9724545643',
-      status: 'Active',
-      image: 'https://via.placeholder.com/30',
-    },
-    {
-      key: '2',
-      index: '02',
-      shopName: 'Nice Beauty Center',
-      city: 'Frankfurt',
-      rating: 5.0,
-      contact: '+9724545643',
-      status: 'Inactive',
-      image: 'https://via.placeholder.com/30',
-    },
-    {
-      key: '3',
-      index: '03',
-      shopName: 'Cameron Salons',
-      city: 'Berlin',
-      rating: 5.0,
-      contact: '+9724545643',
-      status: 'Active',
-      image: 'https://via.placeholder.com/30',
-    },
-  ]
-
-  const filterMenu = (
-    <Menu
-      items={[
-        { key: '1', label: 'Filter by Rating' },
-        { key: '2', label: 'Filter by City' },
-        { key: '3', label: 'Filter by Status' },
-      ]}
-    />
-  )
+  const handleVisibilityToggle = async (id, checked) => {
+    const updatedStatus = checked ? 'active' : 'inactive' // Toggle between active and inactive status
+    console.log(id)
+    try {
+      await updateShop({
+        id: id,
+        data: { status: updatedStatus }, // Send the new status to the backend
+      }).unwrap()
+      message.success(`Shop status updated to ${updatedStatus}`)
+    } catch (error) {
+      message.error('Failed to update shop status')
+    }
+  }
+  const data = shopData?.data?.result.map((shop, index) => ({
+    key: shop._id,
+    index: index + 1,
+    shopName: shop.shopName || 'Not provided',
+    city: shop.city || 'Not provided',
+    rating:
+      (shop.totalRating !== 0 &&
+        (shop.totalRating / shop.totalRatingCount).toFixed(1)) ||
+      'Not specified',
+    contact: shop.phoneNumber || 'Not provided',
+    status: shop.status,
+    image: shop.shopImages?.[0]
+      ? `${url}/${shop.shopImages}`
+      : `https://cdn-icons-png.flaticon.com/512/149/149071.png`,
+  }))
 
   return (
     <div className="w-full py-8">
       <div className="mb-6 flex-col">
-        <div
-          className="flex items-center space-x-2"
-          onClick={() => navigate(-1)}
-        >
+        <div className="flex items-center space-x-2 cursor-pointer">
           <Button
             icon={<FaArrowLeft />}
-            className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
+            className=" flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
+            onClick={() => navigate(-1)}
           />
-          <h1 className="text-xl font-semibold">Shops (135)</h1>
+          <h1 className="text-xl font-semibold">
+            Shops ({shopData?.data?.meta?.total})
+          </h1>
         </div>
-        <div className="flex items-center justify-between mt-3 space-x-4">
-          <div className="flex items-center space-x-4">
-            {/* <Select
-                            defaultValue="All time"
-                            options={[
-                                { value: "All time", label: "All time" },
-                                { value: "This month", label: "This month" },
-                                { value: "This week", label: "This week" },
-                            ]}
-                            className="w-32"
-                        /> */}
-            <Dropdown overlay={filterMenu} trigger={['click']}>
-              <Button
-                icon={<FaFilter />}
-                className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 px-3 py-1 border rounded-md"
-              >
-                Filter
-              </Button>
-            </Dropdown>
+        {currentPage == 1 && (
+          <div className="flex items-center justify-end mt-3 space-x-4">
+            <div className="flex items-center space-x-4">
+              <Select
+                defaultValue="All customers"
+                options={[
+                  { value: 'all', label: 'All Shops' },
+                  { value: 'active', label: 'Active' },
+                  { value: 'inactive', label: 'Inactive' },
+                ]}
+                className="w-40"
+                onChange={(value) =>
+                  value === 'all' ? setStatus() : setStatus(value)
+                }
+              />
+            </div>
+            <Input
+              prefix={<AiOutlineSearch className="text-gray-400" />}
+              placeholder="Search"
+              className="w-60"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
           </div>
-          <Input
-            prefix={<AiOutlineSearch className="text-gray-400" />}
-            placeholder="Search"
-            className="w-60"
-          />
-        </div>
+        )}
       </div>
       <Table
         columns={columns}
         dataSource={data}
         pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: shopData?.data?.meta?.total,
+          onChange: (page) => setCurrentPage(page),
           position: ['bottomCenter'],
           defaultPageSize: 8,
           showSizeChanger: false,
           nextIcon: (
-            <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border absolute right-0">
+            <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">
               Next <FaArrowRight />
             </Button>
           ),
           prevIcon: (
-            <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border absolute left-0">
+            <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">
               <FaArrowLeft /> Previous
             </Button>
           ),

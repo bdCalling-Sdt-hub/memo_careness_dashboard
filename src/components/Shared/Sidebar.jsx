@@ -17,7 +17,11 @@ const Sidebar = () => {
   const menuItems = [
     { name: 'Home', link: '/', icon: <FaHome /> },
     { name: 'Shops', link: '/shops', icon: <FaStore /> },
-    { name: 'Services', link: '/services', icon: <FaCogs /> },
+    {
+      name: 'Services',
+      link: `/services`,
+      icon: <FaCogs />,
+    },
     // { name: 'Products', link: '/products', icon: <FaBoxOpen /> },
     { name: 'Customers', link: '/customers', icon: <FaUsers /> },
     { name: 'Staff', link: '/staff', icon: <FaUserTie /> },

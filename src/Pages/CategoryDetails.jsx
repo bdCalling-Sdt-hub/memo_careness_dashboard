@@ -1,8 +1,50 @@
-import { Table, Input, Select, Button } from 'antd'
+import { Table, Input, Select, Button, Spin } from 'antd'
 import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { AiOutlineSearch } from 'react-icons/ai'
+import { useNavigate, useParams } from 'react-router-dom'
+import { useState } from 'react'
+import { useGetOneServiceQuery } from '../Redux/serviceApis'
 
 const CategoryDetails = () => {
+  const navigate = useNavigate()
+  const params = useParams()
+  const selectedCategoryName = localStorage.getItem('selectedCategoryName')
+  // console.log(params.id)
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10) // Default page size
+  const [sort, setSort] = useState(undefined) // Default page size
+  const [searchTerm, setSearchTerm] = useState('') // Default page size
+
+  const {
+    data: servicesData,
+    isLoading,
+    isError,
+  } = useGetOneServiceQuery({
+    shopCategory: params.id,
+    page: currentPage,
+    limit: pageSize,
+    sort: sort === 'topSelling' ? undefined : sort,
+    searchTerm: searchTerm,
+  })
+
+  // Loading and error state handling
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <Spin tip="Loading category data..." />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <p>Failed to load category data. Please try again later.</p>
+      </div>
+    )
+  }
+
   const columns = [
     {
       title: '#',
@@ -25,38 +67,44 @@ const CategoryDetails = () => {
     },
   ]
 
-  const data = [
-    { key: '1', index: '01', serviceName: 'Hair cut', sales: '6879' },
-    { key: '2', index: '02', serviceName: 'Beard cut', sales: '7890' },
-    { key: '3', index: '03', serviceName: 'Beard massage', sales: '4576' },
-    { key: '4', index: '04', serviceName: 'Hair cut', sales: '1800' },
-    { key: '5', index: '05', serviceName: 'Beard cut', sales: '1800' },
-    { key: '6', index: '06', serviceName: 'Hair cut', sales: '1800' },
-    { key: '7', index: '07', serviceName: 'Deep massage', sales: '1800' },
-    { key: '8', index: '08', serviceName: 'Hair cut', sales: '1800' },
-    { key: '9', index: '09', serviceName: 'Deep massage', sales: '1800 ' },
-  ]
+  const data = servicesData?.data?.result.map((service) => ({
+    key: service._id,
+    index: servicesData.data.result.indexOf(service) + 1,
+    serviceName: service.serviceName || 'N/A',
+    sales: service.totalSales || 0,
+  }))
 
   return (
     <div className="w-full py-8 px-4">
       <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center space-x-2">
+        <div
+          className="flex items-center space-x-2"
+          onClick={() => navigate(-1)}
+        >
           <Button
             icon={<FaArrowLeft />}
             className="bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
           />
-          <h1 className="text-xl font-semibold">Barbers & Hairdressers</h1>
+          <h1 className="text-xl font-semibold">
+            {selectedCategoryName} ({servicesData?.data?.meta?.total})
+          </h1>
         </div>
         <div className="flex items-center space-x-4">
           <Select
             defaultValue="All services"
-            options={[{ value: 'All services', label: 'All services' }]}
+            options={[
+              { value: 'allServices', label: 'All services' },
+              { value: 'topSelling', label: 'Top selling' },
+            ]}
+            onClick={(e) => setSort(e.target.value)}
             className="w-40"
           />
           <Input
             prefix={<AiOutlineSearch className="text-gray-400" />}
             placeholder="Search"
             className="w-60"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
           />
         </div>
       </div>
@@ -64,8 +112,12 @@ const CategoryDetails = () => {
         columns={columns}
         dataSource={data}
         pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: servicesData?.data?.meta?.total,
+          onChange: (page) => setCurrentPage(page),
           position: ['bottomCenter'],
-          defaultPageSize: 8,
+          defaultPageSize: 9,
           showSizeChanger: false,
           nextIcon: (
             <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">

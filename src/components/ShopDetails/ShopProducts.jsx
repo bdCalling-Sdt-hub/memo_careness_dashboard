@@ -1,28 +1,26 @@
-import React from "react";
-
 const ShopProducts = () => {
   const products = [
     {
-      name: "Men Beauty Kit",
-      price: "€30",
-      image: "https://via.placeholder.com/100",  
+      name: 'Men Beauty Kit',
+      price: '€30',
+      image: 'https://via.placeholder.com/100',
     },
     {
-      name: "Men Beauty Kit",
-      price: "€30",
-      image: "https://via.placeholder.com/100",
+      name: 'Men Beauty Kit',
+      price: '€30',
+      image: 'https://via.placeholder.com/100',
     },
     {
-      name: "Men Beauty Kit",
-      price: "€30",
-      image: "https://via.placeholder.com/100",
+      name: 'Men Beauty Kit',
+      price: '€30',
+      image: 'https://via.placeholder.com/100',
     },
     {
-      name: "Men Beauty Kit",
-      price: "€30",
-      image: "https://via.placeholder.com/100",
+      name: 'Men Beauty Kit',
+      price: '€30',
+      image: 'https://via.placeholder.com/100',
     },
-  ];
+  ]
 
   return (
     <div className="w-full py-8">
@@ -48,7 +46,7 @@ const ShopProducts = () => {
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default ShopProducts;
+export default ShopProducts

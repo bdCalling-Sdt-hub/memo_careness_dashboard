@@ -1,23 +1,65 @@
-import { Table, Button } from 'antd'
-import { FaArrowLeft } from 'react-icons/fa'
+import { Table, Button, Spin } from 'antd'
+import { useState } from 'react'
+import { FaArrowLeft, FaArrowRight } from 'react-icons/fa'
 import { Link, useNavigate } from 'react-router-dom'
+import { useGetAllServicesQuery } from '../Redux/serviceApis'
 
 const Services = () => {
   const navigate = useNavigate()
+
+  const [currentPage, setCurrentPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10) // Default page size
+
+  // Get all categories from the backend
+  const {
+    data: servicesData,
+    isLoading,
+    isError,
+  } = useGetAllServicesQuery({
+    page: currentPage,
+    limit: pageSize,
+  })
+
+  // Loading and error state handling
+  if (isLoading) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <Spin tip="Loading category data..." />
+      </div>
+    )
+  }
+
+  if (isError) {
+    return (
+      <div className="w-full flex justify-center items-center h-64">
+        <p>Failed to load category data. Please try again later.</p>
+      </div>
+    )
+  }
+
   const columns = [
     {
       title: '#',
       dataIndex: 'index',
       key: 'index',
       align: 'center',
+      render: (text, record, index) => (
+        <span className="text-gray-500">{index + 1}</span>
+      ),
     },
     {
       title: 'Category names',
       dataIndex: 'categoryName',
       key: 'categoryName',
-      render: (text) => (
-        <Link to={`/services/365415`} className="select-none cursor-pointer">
-          {text}
+      render: (_, record) => (
+        <Link
+          to={`/services/${record.key}`}
+          className="select-none cursor-pointer"
+          onClick={() =>
+            localStorage.setItem('selectedCategoryName', record.categoryName)
+          }
+        >
+          {record.categoryName}
         </Link>
       ),
     },
@@ -27,12 +69,6 @@ const Services = () => {
       key: 'noOfServices',
       render: (text) => `${text} services`,
     },
-    // {
-    //   title: "Profit on category",
-    //   dataIndex: "profit",
-    //   key: "profit",
-    //   render: (text) => `${text}%`,
-    // },
     {
       title: 'Sales',
       dataIndex: 'sales',
@@ -41,40 +77,13 @@ const Services = () => {
     },
   ]
 
-  const data = [
-    {
-      key: '1',
-      index: '01',
-      categoryName: 'Barbers & Hairdressers',
-      noOfServices: 87,
-      profit: 20,
-      sales: 6879,
-    },
-    {
-      key: '2',
-      index: '02',
-      categoryName: 'Skin care',
-      noOfServices: 89,
-      profit: 20,
-      sales: 7890,
-    },
-    {
-      key: '3',
-      index: '03',
-      categoryName: 'Nail Salons',
-      noOfServices: 65,
-      profit: 20,
-      sales: 4576,
-    },
-    {
-      key: '4',
-      index: '04',
-      categoryName: 'Spa & massage',
-      noOfServices: 70,
-      profit: 20,
-      sales: 1800,
-    },
-  ]
+  const data = servicesData?.data?.result.map((service) => ({
+    key: service._id,
+    index: servicesData.data.result.indexOf(service) + 1,
+    categoryName: service.categoryName || 'N/A',
+    noOfServices: service.totalServices || 0,
+    sales: service.totalSales || 0,
+  }))
 
   return (
     <div className="w-full py-8">
@@ -86,12 +95,32 @@ const Services = () => {
           icon={<FaArrowLeft />}
           className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 border rounded-md"
         />
-        <h1 className="text-xl font-semibold">Service Categories (04)</h1>
+        <h1 className="text-xl font-semibold">
+          Service Categories ({servicesData?.data?.meta.total})
+        </h1>
       </div>
       <Table
         columns={columns}
         dataSource={data}
-        pagination={false}
+        pagination={{
+          current: currentPage,
+          pageSize: pageSize,
+          total: servicesData?.data?.meta?.total,
+          onChange: (page) => setCurrentPage(page),
+          position: ['bottomCenter'],
+          defaultPageSize: 10,
+          showSizeChanger: false,
+          nextIcon: (
+            <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">
+              Next <FaArrowRight />
+            </Button>
+          ),
+          prevIcon: (
+            <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">
+              <FaArrowLeft /> Previous
+            </Button>
+          ),
+        }}
         bordered
         rowClassName="text-sm"
       />

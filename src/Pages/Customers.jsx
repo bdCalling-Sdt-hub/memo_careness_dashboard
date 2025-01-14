@@ -48,12 +48,6 @@ const Customers = () => {
     )
   }
 
-  // Pagination change handler
-  const handlePaginationChange = (page, pageSize) => {
-    setCurrentPage(page)
-    setPageSize(pageSize)
-  }
-
   // Map data to the format required by Table component
   const columns = [
     {

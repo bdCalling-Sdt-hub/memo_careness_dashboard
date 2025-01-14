@@ -15,6 +15,7 @@ export const baseApis = createApi({
     'category',
     'privacyPolicy',
     'termsAndCondition',
+    'shop',
   ],
   endpoints: () => ({}),
 })

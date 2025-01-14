@@ -65,14 +65,17 @@ const PayOnShop = () => {
       title: 'Action',
       key: 'action',
       align: 'center',
-      render: (text, record) => (
-        <Button
-          className="bg-green-100 text-green-700 border-none hover:bg-green-200 px-4 py-1 rounded-md"
-          onClick={() => notifyOneShop({ id: record.key })}
-        >
-          Notify
-        </Button>
-      ),
+      render: (_, record) => {
+        // console.log(record)
+        return (
+          <Button
+            className="bg-green-100 text-green-700 border-none hover:bg-green-200 px-4 py-1 rounded-md"
+            onClick={() => handleNotifyOneShop(record.key)}
+          >
+            Notify
+          </Button>
+        )
+      },
     },
   ]
 
@@ -94,6 +97,16 @@ const PayOnShop = () => {
       console.log('All shops notified successfully')
     } catch (error) {
       console.error('Error notifying all shops:', error)
+    }
+  }
+
+  const handleNotifyOneShop = async (id) => {
+    console.log(id)
+    try {
+      await notifyOneShop(id).unwrap() // Trigger notification for one shop
+      toast.success('Notification sent to this shop!')
+    } catch (error) {
+      toast.error('Error sending notification to this shop')
     }
   }
 

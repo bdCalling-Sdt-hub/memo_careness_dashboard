@@ -26,11 +26,11 @@ const payOnShopApis = baseApis.injectEndpoints({
       invalidatesTags: ['payOnShop'],
     }),
     notifyOneShop: builder.mutation({
-      query: ( id) => {
+      query: (id, data) => {
         return {
           url: `/client/notify-single-shop/${id}`,
           method: 'POST',
-          // body: data,
+          body: data,
         }
       },
     }),
