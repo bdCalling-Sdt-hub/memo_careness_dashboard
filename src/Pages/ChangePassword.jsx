@@ -1,8 +1,11 @@
 import { Form, Input, Button, message } from 'antd'
 import { FaArrowLeft } from 'react-icons/fa'
 import { useUpdateAndChangePasswordMutation } from '../Redux/changePasswordApis'
+import { use } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const ChangePassword = () => {
+  const navigate = useNavigate()
   const [form] = Form.useForm()
   const [updateAndChangePassword, { isLoading }] =
     useUpdateAndChangePasswordMutation()
@@ -36,7 +39,10 @@ const ChangePassword = () => {
   return (
     <div className="w-full bg-white p-8 rounded-lg shadow-md">
       {/* Header Section */}
-      <div className="flex items-center space-x-2 mb-6">
+      <div
+        className="flex items-center space-x-2 mb-6"
+        onClick={() => navigate(-1)}
+      >
         <button className="flex items-center justify-center bg-transparent text-gray-700 hover:bg-gray-100 py-1 px-3 border rounded-md">
           <FaArrowLeft />
         </button>

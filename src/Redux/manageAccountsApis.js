@@ -3,9 +3,13 @@ import { baseApis } from './baseApis'
 const manageAccountsApis = baseApis.injectEndpoints({
   endpoints: (builder) => ({
     getAllAdminInformation: builder.query({
-      query: () => ({
+      query: ({ page, limit }) => ({
         url: '/admin/all-admins',
         method: 'GET',
+        params: {
+          page,
+          limit,
+        },
       }),
       providesTags: ['manageProfile'],
     }),

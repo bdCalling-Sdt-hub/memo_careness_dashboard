@@ -17,10 +17,19 @@ const profileApis = baseApis.injectEndpoints({
       }),
       invalidatesTags: ['profile'],
     }),
+    updateSuperAdminProfileInformation: builder.mutation({
+      query: (data) => ({
+        url: '/super-admin/update-profile',
+        method: 'PATCH',
+        body: data,
+      }),
+      invalidatesTags: ['profile'],
+    }),
   }),
 })
 
 export const {
   useGetProfileInformationQuery,
+  useUpdateSuperAdminProfileInformationMutation,
   useUpdateProfileInformationMutation,
 } = profileApis

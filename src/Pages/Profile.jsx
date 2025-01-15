@@ -19,7 +19,7 @@ const Profile = () => {
     }
   }, [])
 
-  const items = [
+  let items = [
     {
       key: '1',
       label: (
@@ -60,6 +60,13 @@ const Profile = () => {
       children: <ManageAccounts onAdminAdded={() => setActiveTab('3')} />,
     },
   ]
+
+  if (role == '"admin"') {
+    items.pop()
+  }
+  if (role == '"superAdmin"') {
+    items = items.filter((item) => item.key !== '2')
+  }
 
   return (
     <div className="w-full px-6 py-8 bg-white rounded-lg shadow-md">

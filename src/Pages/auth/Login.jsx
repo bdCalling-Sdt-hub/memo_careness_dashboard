@@ -8,6 +8,10 @@ import { jwtDecode } from 'jwt-decode'
 const Login = () => {
   const [loginUser] = useLoginMutation()
   const onFinish = (values) => {
+    // console.log(values)
+    values.email = values.email.trim()
+    values.password = values.password.trim()
+
     toast.remove()
     loginUser(values)
       .unwrap()
