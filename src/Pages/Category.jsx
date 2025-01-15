@@ -20,6 +20,7 @@ import {
   useUpdateCategoryMutation,
 } from '../Redux/categoryApis'
 import { useState } from 'react'
+import { url } from '../Redux/server'
 
 const Category = () => {
   const navigate = useNavigate()
@@ -41,7 +42,7 @@ const Category = () => {
 
   const [newCategory, setNewCategory] = useState('') // Local state for new category name
   const [image, setImage] = useState(null) // Local state for the image file
-  const [imagePreview, setImagePreview] = useState(null) // To preview the uploaded image
+  const [imageUrl, setImageUrl] = useState('') // To show the uploaded image
   const [isModalVisible, setIsModalVisible] = useState(false) // Modal visibility for adding new category
 
   // Loading and error state handling
@@ -92,7 +93,7 @@ const Category = () => {
         message.success('Category added successfully')
         setNewCategory('') // Clear the input field
         setImage(null) // Clear the selected image
-        setImagePreview(null) // Clear the image preview
+        setImageUrl('') // Clear the image url
         setIsModalVisible(false) // Close the modal
       })
       .catch((error) => {
@@ -130,6 +131,25 @@ const Category = () => {
       key: 'categoryName',
     },
     {
+      title: 'Category Image',
+      dataIndex: 'categoryImage',
+      key: 'categoryImage',
+      render: (text, record) => {
+        return (
+          <Image.PreviewGroup>
+            <Image
+              src={record.categoryImage}
+              alt={record.categoryName}
+              width={50}
+              preview={{
+                src: record.categoryImage,
+              }}
+            />
+          </Image.PreviewGroup>
+        )
+      },
+    },
+    {
       title: 'Status',
       dataIndex: 'status',
       key: 'status',
@@ -161,6 +181,16 @@ const Category = () => {
     },
   ]
 
+  const data = categoryData?.data?.result.map((category, index) => ({
+    key: category._id,
+    index: index + 1,
+    categoryName: category.categoryName || 'Not provided',
+    categoryImage: category.image
+      ? `${url}/${category.image}`
+      : `https://cdn-icons-png.flaticon.com/512/149/149071.png`,
+    status: category.status,
+  }))
+
   return (
     <div className="w-full py-8 px-4">
       <div className="flex justify-between items-center mb-6">
@@ -191,7 +221,7 @@ const Category = () => {
       {/* Table Section */}
       <Table
         columns={columns}
-        dataSource={categoryData?.data?.result}
+        dataSource={data}
         pagination={{
           current: currentPage,
           pageSize: pageSize,
@@ -210,7 +240,7 @@ const Category = () => {
               <FaArrowLeft /> Previous
             </Button>
           ),
-        }}       
+        }}
         bordered
         rowClassName="text-sm"
       />
@@ -246,7 +276,7 @@ const Category = () => {
               setImage(file)
               const reader = new FileReader()
               reader.onload = () => {
-                setImagePreview(reader.result)
+                setImageUrl(reader.result)
               }
               reader.readAsDataURL(file) // Set the image preview
               return false // Prevent default upload behavior
@@ -256,9 +286,9 @@ const Category = () => {
           </Upload>
         </div>
         {/* Show Image Preview */}
-        {imagePreview && (
+        {imageUrl && (
           <div className="mb-4">
-            <Image src={imagePreview} alt="Uploaded Image" width={100} />
+            <Image src={imageUrl} alt="Uploaded Image" width={100} />
           </div>
         )}
       </Modal>
