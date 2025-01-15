@@ -210,7 +210,7 @@ const Category = () => {
               <FaArrowLeft /> Previous
             </Button>
           ),
-        }}
+        }}       
         bordered
         rowClassName="text-sm"
       />

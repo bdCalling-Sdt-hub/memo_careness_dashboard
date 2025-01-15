@@ -4,13 +4,17 @@ import { MdNotificationsNone } from 'react-icons/md'
 import { Popover, Switch } from 'antd'
 import { Link } from 'react-router-dom'
 import { useGetProfileInformationQuery } from '../../Redux/profileApis'
+import { url } from '../../Redux/server'
 
 const Navbar = () => {
   const [visible, setVisible] = useState(false)
   const { data } = useGetProfileInformationQuery()
+  const [profileImage, setProfileImage] = useState(null)
+
+  console.log(data?.data?.profile_image)
 
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
-
+  // setProfileImage(data?.data?.profile_image)
   const notifications = [
     {
       id: 1,
@@ -106,8 +110,12 @@ const Navbar = () => {
 
         <button className="flex justify-end gap-2 items-center border-2 rounded-md p-1 px-2">
           <img
-            src={`https://placehold.co/400`}
-            className="w-10 h-10 rounded-full object-cover"
+            src={
+              data?.data?.profile_image
+                ? `${url}/${data?.data?.profile_image}`
+                : `https://placehold.co/400`
+            }
+            className="w-10 h-10 border rounded-full object-cover"
             alt=""
           />
           <Link to={`/profile`} className="text-left">

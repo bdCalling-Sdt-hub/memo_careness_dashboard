@@ -9,6 +9,7 @@ import {
 } from '../../Redux/profileApis'
 import { UploadOutlined } from '@ant-design/icons'
 import { url } from '../../Redux/server'
+import { IoCameraOutline } from 'react-icons/io5'
 
 const PersonalDetails = () => {
   const navigate = useNavigate()
@@ -26,7 +27,14 @@ const PersonalDetails = () => {
 
   const [form] = Form.useForm()
   const [profileImage, setProfileImage] = useState(null)
+  const [localImage, setLocalImage] = useState('')
   const [name, setName] = useState('') // State for name
+  const [image, setImage] = useState(null)
+  const handleChange = (e) => {
+    const file = e.target.files[0]
+    setImage(file)
+    setProfileImage(file)
+  }
 
   useEffect(() => {
     if (data?.data) {
@@ -34,13 +42,7 @@ const PersonalDetails = () => {
       setProfileImage(data.data.profile_image) // Initialize profile image state
     }
   }, [data])
-  // useEffect(() => {
-  //   if (data?.data) {
-  //     setName(data.data.name) // Initialize name state
-  //     setProfileImage(data.data.profile_image) // Initialize profile image state
-  //   }
-  // }, [data])
-
+  console.log(localImage)
   const onFinish = async (values) => {
     try {
       let formData
@@ -101,47 +103,39 @@ const PersonalDetails = () => {
     <div className="w-full bg-white p-8 rounded-lg">
       <div className="flex justify-between items-center mb-6">
         <div className="flex items-center gap-4 ">
-          <div className="relative flex flex-col">
-            <img
-              src={
-                profileImage
-                  ? `${url}/${profileImage}`
-                  : 'https://via.placeholder.com/100'
-              }
-              alt="Profile"
-              className="w-20 h-20 rounded-full object-cover"
+          <div className="relative w-[140px] h-[124px] mx-auto ">
+            <input
+              type="file"
+              onInput={handleChange}
+              id="img"
+              style={{ display: 'none' }}
             />
-            <Upload
-              showUploadList={false}
-              beforeUpload={(file) => {
-                setProfileImage(file)
-                return false
-              }}
+            <img
+              style={{ width: 140, height: 140, borderRadius: '100%' }}
+              src={`${
+                image ? URL.createObjectURL(image) : `${url}/${profileImage}`
+              }`}
+              alt=""
+              className="border-2  p-[2px] object-cover"
+            />
+
+            <label
+              htmlFor="img"
+              className="
+                            absolute top-[80px] -right-2
+                            bg-[var(--primary-color)]
+                            rounded-full
+                            w-6 h-6
+                            flex items-center justify-center
+                            cursor-pointer
+                        "
             >
-              <Button
-                type="primary"
-                icon={<UploadOutlined />}
-                className="mt-2 text-xs"
-              >
-                Upload
-              </Button>
-            </Upload>
-            {/* <Upload
-              showUploadList={false}
-              beforeUpload={(file) => {
-                setProfileImage(file)
-                return false
-              }}
-            >
-              <Button
-                type="primary"
-                icon={<UploadOutlined />}
-                className="mt-2 text-xs"
-              >
-                Upload Image
-              </Button>
-            </Upload> */}
+              <div className="bg-yellow p-1 rounded-full">
+                <IoCameraOutline className="text-3xl -ml-5 mt-10 font-bold" />
+              </div>
+            </label>
           </div>
+
           <div>
             <h1 className="text-xl font-semibold">{name || 'N/A'}</h1>
             <p className="text-gray-500">{profileData.email || 'N/A'}</p>
