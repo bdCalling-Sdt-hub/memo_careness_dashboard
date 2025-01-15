@@ -10,11 +10,15 @@ const metaApis = baseApis.injectEndpoints({
     }),
     getSalesProfitChartData: builder.query({
       query: (year) => ({
-        url: `/meta/sales-profit-chart-data?year=${year}`,
+        url: `/meta/sales-profit-chart-data`,
         method: 'GET',
+        params: {
+          year: year,
+        },
       }),
     }),
   }),
 })
 
 export const { useGetMetaDataQuery, useGetSalesProfitChartDataQuery } = metaApis
+export default metaApis

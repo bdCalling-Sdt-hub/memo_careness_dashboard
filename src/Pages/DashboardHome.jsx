@@ -10,7 +10,7 @@ const DashboardHome = () => {
       <div className="flex space-x-8 p-6">
         {/* Sales Overview with custom width and height */}
         <div className="flex-1 bg-white p-6 rounded-lg card-shadow">
-          <SalesOverview width="80%" height="500px" />
+          <SalesOverview width="80%" height="200px" />
         </div>
         {/* Recent Customers Component */}
         <div className="w-80 bg-white p-6 rounded-lg card-shadow">
