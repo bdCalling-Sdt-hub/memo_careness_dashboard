@@ -11,8 +11,6 @@ const Navbar = () => {
   const { data } = useGetProfileInformationQuery()
   const [profileImage, setProfileImage] = useState(null)
 
-  console.log(data?.data?.profile_image)
-
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
   // setProfileImage(data?.data?.profile_image)
   const notifications = [
@@ -91,7 +89,7 @@ const Navbar = () => {
   )
 
   return (
-    <div className="flex justify-between items-center bg-[#FFFFFF] p-3 rounded-md relative">
+    <div className="flex justify-between  items-center bg-[#FFFFFF] p-3 rounded-md relative">
       <p className="text-2xl text-[#016A70]">Carenes Statistics</p>
       <div className="flex justify-end items-center gap-2">
         <Popover

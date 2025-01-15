@@ -141,8 +141,14 @@ const Category = () => {
               src={record.categoryImage}
               alt={record.categoryName}
               width={50}
+              height={50}
               preview={{
                 src: record.categoryImage,
+              }}
+              style={{
+                cursor: 'pointer',
+                backgroundSize: 'contain',
+                objectFit: 'contain',
               }}
             />
           </Image.PreviewGroup>
@@ -156,7 +162,7 @@ const Category = () => {
       render: (status, record) => (
         <Switch
           checked={status === 'active'}
-          onChange={(checked) => handleVisibilityToggle(record._id, checked)}
+          onChange={(checked) => handleVisibilityToggle(record.key, checked)}
           checkedChildren="unhide"
           unCheckedChildren="hide"
         />
@@ -168,7 +174,7 @@ const Category = () => {
       render: (_, record) => (
         <Popconfirm
           title="Are you sure to delete this category?"
-          onConfirm={() => handleDelete(record._id)}
+          onConfirm={() => handleDelete(record.key)}
           okText="Yes"
           cancelText="No"
         >

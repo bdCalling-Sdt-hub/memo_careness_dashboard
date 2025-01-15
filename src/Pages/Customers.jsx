@@ -14,7 +14,7 @@ const Customers = () => {
 
   // States to manage pagination, search, and filter
   const [currentPage, setCurrentPage] = useState(1)
-  const [pageSize, setPageSize] = useState(8) // Default page size
+  const [pageSize, setPageSize] = useState(9) // Default page size
   const [searchText, setSearchText] = useState('')
   const [status, setStatus] = useState('all')
 
@@ -181,7 +181,7 @@ const Customers = () => {
           total: customerData?.data?.meta?.total,
           onChange: (page) => setCurrentPage(page),
           position: ['bottomCenter'],
-          defaultPageSize: 8,
+          defaultPageSize: 9,
           showSizeChanger: false,
           nextIcon: (
             <Button className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 px-3 py-1 rounded-md border">

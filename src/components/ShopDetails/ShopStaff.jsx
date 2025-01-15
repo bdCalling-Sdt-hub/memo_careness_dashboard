@@ -31,7 +31,6 @@ const ShopStaff = () => {
     entityType: 'Shop',
   })
 
-  console.log(shopBusinessHour)
 
   if (isLoadingShopBusinessHour || isLoading) {
     return (

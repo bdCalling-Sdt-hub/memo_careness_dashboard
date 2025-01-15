@@ -1,7 +1,6 @@
 import { url } from '../../Redux/server'
 
 const ShopPhoto = ({ shopImages }) => {
-  console.log(shopImages)
   return (
     <div className="w-full px-6 py-8">
       <h2 className="text-lg font-medium mb-4">Shop Photos</h2>
@@ -12,7 +11,12 @@ const ShopPhoto = ({ shopImages }) => {
               key={index}
               className="rounded-lg overflow-hidden shadow-sm bg-white"
             >
-              <img src={`${url}/${photo}`} alt="Shop Photo" className="w-72 " />
+              <img
+                src={`${url}/${photo}`}
+                alt="Shop Photo"
+                className="w-72"
+                loading="lazy"
+              />
             </div>
           ))
         ) : (

@@ -58,13 +58,11 @@ const PayOnShop = () => {
       title: 'Amount Need to Pay',
       dataIndex: 'amount',
       key: 'amount',
-      align: 'right',
       render: (text) => <span className="text-gray-600">{text}</span>,
     },
     {
       title: 'Action',
       key: 'action',
-      align: 'center',
       render: (_, record) => {
         // console.log(record)
         return (

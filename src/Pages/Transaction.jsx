@@ -57,14 +57,12 @@ const Transaction = () => {
       title: '#',
       dataIndex: 'index',
       key: 'index',
-      align: 'center',
       render: (text) => <span className="text-gray-500">{text}</span>,
     },
     {
       title: 'Date',
       dataIndex: 'date',
       key: 'date',
-      align: 'center',
       render: (text) => (
         <span className="text-gray-600">
           {new Date(text).toLocaleString('en-GB', {
@@ -96,14 +94,12 @@ const Transaction = () => {
       title: 'Paid Amount',
       dataIndex: 'amount',
       key: 'amount',
-      align: 'right',
       render: (text) => <span className="text-gray-600">€{text}</span>,
     },
     {
       title: 'Payment Type',
       dataIndex: 'type',
       key: 'type',
-      align: 'center',
       render: (text) => <span className="text-gray-500">{text}</span>,
     },
   ]

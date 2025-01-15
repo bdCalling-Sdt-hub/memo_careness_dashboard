@@ -31,7 +31,6 @@ const shopApis = baseApis.injectEndpoints({
     }),
     getAllServiceFromOneShop: builder.query({
       query: ({ page, limit, shop }) => {
-        console.log('shop: ', shop)
         return {
           url: `/service/get-all`,
           method: 'GET',
@@ -59,7 +58,6 @@ const shopApis = baseApis.injectEndpoints({
     }),
     getOneShopAllStaff: builder.query({
       query: ({ page, limit, shop }) => {
-        console.log('shop: ', shop)
         return {
           url: `/staff/all-staff`,
           method: 'GET',

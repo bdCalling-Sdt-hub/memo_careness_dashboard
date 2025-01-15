@@ -119,7 +119,6 @@ const Shops = () => {
   ]
   const handleVisibilityToggle = async (id, checked) => {
     const updatedStatus = checked ? 'active' : 'inactive' // Toggle between active and inactive status
-    console.log(id)
     try {
       await updateShop({
         id: id,
