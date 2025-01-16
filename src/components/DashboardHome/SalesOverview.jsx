@@ -74,7 +74,7 @@ const SalesOverview = () => {
     labels: months,
     datasets: [
       {
-        label: 'Total Sales',
+        label: 'Total Sales (€)',
         data: salesData,
         borderColor: '#007bff',
         borderWidth: 2,
@@ -103,7 +103,7 @@ const SalesOverview = () => {
         pointHoverBorderWidth: 2,
       },
       {
-        label: 'Profit',
+        label: 'Profit (€)',
         data: profitData,
         borderColor: '#00ff00',
         borderWidth: 2,

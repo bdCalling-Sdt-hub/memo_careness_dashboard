@@ -28,7 +28,7 @@ const Navbar = () => {
     refetch,
   } = useGetAllNotificationsQuery({
     page: currentPage,
-    limit: 10,
+    limit: 5,
   })
   const [readAllNotification] = useReadAllNotificationsMutation()
 
@@ -140,14 +140,25 @@ const Navbar = () => {
             <button
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               className="py-2 px-4 rounded-md"
+              disabled={currentPage === 1}
             >
-              <FaArrowLeft />
+              <FaArrowLeft
+                style={{ color: currentPage === 1 ? 'gray' : 'black' }}
+              />
             </button>
             <button
               onClick={() => setCurrentPage((prev) => prev + 1)}
               className="py-2 px-4 rounded-md"
+              disabled={currentPage === notificationsData?.data?.meta.totalPage}
             >
-              <FaArrowRight />
+              <FaArrowRight
+                style={{
+                  color:
+                    currentPage === notificationsData?.data?.meta.totalPage
+                      ? 'gray'
+                      : 'black',
+                }}
+              />
             </button>
           </div>
         </div>
