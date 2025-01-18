@@ -20,10 +20,12 @@ export const SocketProvider = ({ children }) => {
   console.log(onlineUser)
 
   useEffect(() => {
-    const savedToken = localStorage.getItem('token')
-    const decoded = jwtDecode(savedToken)
-    if (savedToken) {
-      setId(decoded.id) 
+    if (localStorage.getItem('token')) {
+      const savedToken = localStorage.getItem('token')
+      const decoded = jwtDecode(savedToken)
+      if (savedToken) {
+        setId(decoded.id)
+      }
     }
   }, [])
 
@@ -37,7 +39,7 @@ export const SocketProvider = ({ children }) => {
     })
 
     socketConnection.on('onlineUser', (data) => {
-      setOnlineUser(data) 
+      setOnlineUser(data)
     })
 
     setSocket(socketConnection) //okk
@@ -45,7 +47,7 @@ export const SocketProvider = ({ children }) => {
     return () => {
       socketConnection.disconnect()
     }
-  }, [id]) 
+  }, [id])
 
   return (
     <SocketContext.Provider value={{ socket, onlineUser }}>
